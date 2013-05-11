@@ -537,3 +537,16 @@ function testFindAndModify() {
     });
   });
 }
+
+function testFindAndModifyWithUpsert() {
+  eb.send('test.persistor', {
+    action: 'command',
+    command: "{findAndModify: 'testcoll', update: {name: 'bravo', age: 20}, upsert: 1, new: true}"
+  }, function(reply) {
+    vassert.assertEquals('ok', reply.status);
+    vassert.assertEquals('bravo', reply.result.value.name);
+    vassert.assertTrue(20 == reply.result.value.age);
+    vassert.assertTrue(typeof reply.result.value.male === 'undefined');
+    vassert.testComplete();
+  });
+}
