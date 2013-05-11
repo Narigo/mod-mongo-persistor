@@ -512,3 +512,28 @@ function testCount() {
 
 
 }
+
+function testFindAndModify() {
+  eb.send('test.persistor', {
+    collection: 'testcoll',
+    action: 'save',
+    document: {
+      name: 'alpha',
+      age: 10,
+      male: true
+    }
+  }, function(reply) {
+    vassert.assertEquals('ok', reply.status);
+
+    eb.send('test.persistor', {
+      action: 'command',
+      command: "{findAndModify: 'testcoll', query: {name: 'alpha'}, update: {'$set': {age: 15}},fields: {name: 1, age: 1}}"
+    }, function(reply) {
+      vassert.assertEquals('ok', reply.status);
+      vassert.assertEquals('alpha', reply.result.value.name);
+      vassert.assertTrue(10 == reply.result.value.age);
+      vassert.assertTrue(typeof reply.result.value.male === 'undefined');
+      vassert.testComplete();
+    });
+  });
+}
