@@ -424,3 +424,33 @@ An example for delete would be
         "matcher": <matcher>,
         "write_concern": "SAFE"
     }
+
+### command
+
+The command operation lets you send a raw command to mongodb. You can use it to call other functions that mongodb provides - you just need to provide the right BSON String.
+
+Here is an example how to use it to issue a findAndModify command:
+
+    {
+        "action" : "command",
+        "command" : "{findAndModify: 'testcoll', query: {name: 'alpha'}, update: {'$set': {age: 15}}, fields: {name: 1, age: 1}}"
+    }
+
+It will reply with a complete answer of the mongo db as field "result". So if you had a database object inserted before, the value would represent it in this case, as shown in the example output below.
+
+    {
+        "result" : {
+            "serverUsed" : "localhost/127.0.0.1:27017",
+            "value" : {
+                "_id" : "6fd2a860-4f36-4f0f-992b-ca62df9e2b37",
+                "name" : "alpha",
+                "age" : 10
+            },
+            "lastErrorObject" : {
+                "updatedExisting" : true,
+                "n" : 1
+            },
+            "ok" : 1
+        },
+        "status" : "ok"
+    }
